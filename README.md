@@ -4,4 +4,4 @@ This will be (haven't written anything yet) a more or less faithful port of Andr
 
 The main motivation is to learn Mnesia and getting to grips with distribution in Elixir.
 
-This might eventually evolve into a [book](http://www.exotpbook.com) chapter/section on Distribution.
+This might eventually evolve into a [book](http://www.exotpbook.com) chapter/section on Distribution. And even further goal would be to demonstrate interop with other languages.
