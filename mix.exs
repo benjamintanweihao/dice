@@ -4,7 +4,7 @@ defmodule Dice.Mixfile do
   def project do
     [app: :dice,
      version: "0.0.1",
-     elixir: "~> 0.13.1-dev",
+     elixir: "~> 0.13.0",
      deps: deps]
   end
 
@@ -22,6 +22,6 @@ defmodule Dice.Mixfile do
   #
   # Type `mix help deps` for more examples and options
   defp deps do
-    []
+    [{ :amnesia, github: "benjamintanweihao/amnesia" }]
   end
 end

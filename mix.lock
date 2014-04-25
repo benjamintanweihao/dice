@@ -1,0 +1,4 @@
+%{"amnesia": {:git, "git://github.com/benjamintanweihao/amnesia.git", "638c4d8d7f37ee017e16fd21999d9cd6569dace6", []},
+  "continuum": {:git, "git://github.com/benjamintanweihao/continuum.git", "0f8ff36f895acf925f340c1ef8b4f3a3431afc10", []},
+  "datastructures": {:git, "git://github.com/meh/elixir-datastructures.git", "28a7aee9addfe521ad0aa62f5e54f1ad597356cc", []},
+  "exquisite": {:git, "git://github.com/meh/exquisite.git", "beff7f389dd4016bffa0ec50b44d80efdd9070b1", []}}
