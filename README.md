@@ -45,14 +45,55 @@ iex(slave2@benjamintan)1> Node.list
 ## Creating the Schema
 
 ```elixir
-iex(master@benjamintan)7> Amnesia.Schema.create([:'master@benjamintan', :'slave1@benjamintan', :'slave2@benjamintan'])
-:ok
-iex(master@benjamintan)8> Amnesia.Schema.create([:'master@benjamintan', :'slave1@benjamintan', :'slave2@benjamintan'])
-{:error, {:master@benjamintan, {:already_exists, :master@benjamintan}}}
+iex(master@benjamintan)7> 
+[node|Node.list] |> Amnesia.Schema.create
 ```
 
 On _all_ nodes:
 
 ```elixir
 iex> Amnesia.start
+```
+
+Then, one one of the nodes:
+
+```elixir
+Dice.Database.create(disk: [node|Node.list])
+```
+
+## Examples
+
+Say on one node:
+
+```elixir
+iex(master@benjamintan)17> Dice.Server.put "elixir", "awesome sauce"
+"awesome sauce"
+```
+
+Then on another node:
+
+```elixir
+iex(slave1@benjamintan)4> Dice.Server.get "elixir"
+"awesome sauce"
+```
+
+`Ctrl+C` twice on the `master` node. (Or close it entirely).
+
+Then let's try on `slave2`:
+
+```elixir
+iex(slave2@benjamintan)5> Dice.Server.get "elixir"
+"awesome sauce"
+```
+
+Now let's bring back the master:
+
+```elixir
+% iex --sname master -S mix
+iex(master@benjamintan)1> Node.connect :'slave1@benjamintan'
+true
+iex(master@benjamintan)2> Amnesia.start
+:ok
+iex(master@benjamintan)3> Dice.Server.get "elixir"
+"awesome sauce"
 ```

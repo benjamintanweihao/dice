@@ -31,10 +31,12 @@ defmodule Dice.Server do
   #############
 
   def init(_) do
-    Amnesia.Schema.create
-    Amnesia.start
-    # TODO: Remove this later. Use the become_master/become_slave
-    Database.create(disk: [node])
+    # NOTE: OMG! Does tihs automatically connect?
+    # Amnesia.Schema.create([:'master@benjamintan', :'slave1@benjamintan', :'slave2@benjamintan'])
+    # Amnesia.start
+    # # TODO: Remove this later. Use the become_master/become_slave
+    # Database.create(disk: [:'master@benjamintan', :'slave1@benjamintan', :'slave2@benjamintan'])
+
     {:ok, []}
   end
 
