@@ -17,35 +17,35 @@ This might eventually evolve into a [book](http://www.exotpbook.com) chapter/sec
 One one machine (in this example, `master`):
 
 ```elixir
-iex(master@benjamintan)1> Node.connect :'slave1@benjamintan'
-iex(master@benjamintan)2> Node.connect :'slave2@benjamintan'
+iex(master@benjamintan)> Node.connect :'slave1@benjamintan'
+iex(master@benjamintan)> Node.connect :'slave2@benjamintan'
 ```
 
 In `master`:
 
 ```elixir
-iex(master@benjamintan)6> Node.list
+iex(master@benjamintan)> Node.list
 [:slave1@benjamintan, :slave2@benjamintan]
 ```
 
 In `slave1`:
 
 ```elixir
-iex(slave1@benjamintan)1> Node.list
+iex(slave1@benjamintan)> Node.list
 [:master@benjamintan, :slave2@benjamintan]
 ```
 
 In `slave2`:
 
 ```elixir
-iex(slave2@benjamintan)1> Node.list
+iex(slave2@benjamintan)> Node.list
 [:master@benjamintan, :slave1@benjamintan]
 ```
 
 ## Creating the Schema
 
 ```elixir
-iex(master@benjamintan)7> 
+iex(master@benjamintan)> 
 [node|Node.list] |> Amnesia.Schema.create
 ```
 
@@ -66,14 +66,14 @@ Dice.Database.create(disk: [node|Node.list])
 Say on one node:
 
 ```elixir
-iex(master@benjamintan)17> Dice.Server.put "elixir", "awesome sauce"
+iex(master@benjamintan)> Dice.Server.put "elixir", "awesome sauce"
 "awesome sauce"
 ```
 
 Then on another node:
 
 ```elixir
-iex(slave1@benjamintan)4> Dice.Server.get "elixir"
+iex(slave1@benjamintan)> Dice.Server.get "elixir"
 "awesome sauce"
 ```
 
@@ -93,10 +93,10 @@ Now let's bring back `master`:
 ```
 
 ```elixir
-iex(master@benjamintan)1> Node.connect :'slave1@benjamintan'
+iex(master@benjamintan)> Node.connect :'slave1@benjamintan'
 true
-iex(master@benjamintan)2> Amnesia.start
+iex(master@benjamintan)> Amnesia.start
 :ok
-iex(master@benjamintan)3> Dice.Server.get "elixir"
+iex(master@benjamintan)> Dice.Server.get "elixir"
 "awesome sauce"
 ```
