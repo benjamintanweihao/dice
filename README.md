@@ -86,6 +86,13 @@ iex(slave2@benjamintan)5> Dice.Server.get "elixir"
 "awesome sauce"
 ```
 
+Create another entry:
+
+```elixir
+iex(slave2@benjamintan)5> Dice.Server.put "php", "lolwut"
+"lolwut"
+```
+
 Now let's bring back `master`:
 
 ```
@@ -97,6 +104,8 @@ iex(master@benjamintan)> Node.connect :'slave1@benjamintan'
 true
 iex(master@benjamintan)> Amnesia.start
 :ok
-iex(master@benjamintan)> Dice.Server.get "elixir"
-"awesome sauce"
+iex(master@benjamintan)> Dice.Server.get "php"
+"lolwut"
 ```
+
+Notice that the table data is automatically replicated. Mnesia FTW!
