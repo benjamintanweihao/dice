@@ -86,10 +86,13 @@ iex(slave2@benjamintan)5> Dice.Server.get "elixir"
 "awesome sauce"
 ```
 
-Now let's bring back the master:
+Now let's bring back `master`:
+
+```
+% iex --sname master -S mix
+```
 
 ```elixir
-% iex --sname master -S mix
 iex(master@benjamintan)1> Node.connect :'slave1@benjamintan'
 true
 iex(master@benjamintan)2> Amnesia.start
