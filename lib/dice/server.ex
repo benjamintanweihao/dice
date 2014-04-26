@@ -1,8 +1,6 @@
 defmodule Dice.Server do
   use GenServer.Behaviour
-  use Amnesia
-
-  defrecordp :dice_cache, key: nil, value: nil
+  use Dice.Database
 
   #######
   # API #
@@ -17,7 +15,6 @@ defmodule Dice.Server do
   end
 
   def put(key, value) do
-    # NOTE: I think this should be a cast instead
     :gen_server.call(__MODULE__, {:put, key, value})
   end
 
@@ -26,7 +23,6 @@ defmodule Dice.Server do
   end
 
   def remove(key) do
-    # NOTE: I think this should be a cast instead
     :gen_server.call(__MODULE__, {:remove, key})
   end
 
@@ -35,7 +31,10 @@ defmodule Dice.Server do
   #############
 
   def init(_) do
-    Amnesia.Table.wait([:dice_cache])
+    Amnesia.Schema.create
+    Amnesia.start
+    # TODO: Remove this later. Use the become_master/become_slave
+    Database.create(disk: [node])
     {:ok, []}
   end
 
@@ -48,40 +47,15 @@ defmodule Dice.Server do
   end
 
   def handle_call({:put, key, value}, _from, state) do
-    record = dice_cache(key: key, value: value)
-    {:atomic, result } = Amnesia.transaction do
-                           case DiceCache.read(key) do
-                             [] ->
-                               record.write
-                               :ok
-                             [dice_cache(key: key, value: value)] ->
-                               record.write
-                               value
-                           end
-                         end
-    {:reply, result, state}
+    {:reply, Database.DiceCache.put(key, value), state}
   end
 
   def handle_call({:get, key}, _from, state) do
-    case DiceCache.read!(key) do
-      [dice_cache(key: key, value: value)] ->
-        {:reply, value, state}
-      _ ->
-        {:reply, nil, state}
-    end
+    {:reply, Database.DiceCache.get(key), state}
   end
 
   def handle_call({:remove, key}, _from, state) do
-    {:atomic, result} = Amnesia.transaction do
-                          case DiceCache.read(key) do
-                            [] -> 
-                              :ok
-                            [dice_cache(key: key, value: value)] ->
-                              DiceCache.delete(key)
-                              value
-                          end
-                        end
-    {:reply, result, state}
+    {:reply,  Database.DiceCache.remove(key), state }
   end
 
 end
