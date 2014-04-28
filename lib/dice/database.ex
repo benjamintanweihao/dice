@@ -5,16 +5,9 @@ defdatabase Dice.Database do
   deftable DiceCache, [:key, :value] do
 
     def put(key, value) do
-      record = DiceCache[key: key, value: value]
       Amnesia.transaction do
-        case DiceCache.read(key) do
-          DiceCache[key: _key, value: _value] ->
-            record.update(value: value).write
-            value
-          _ ->
-            record.write
-            value
-        end
+        DiceCache[key: key, value: value].write
+        value
       end
     end
 

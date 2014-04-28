@@ -49,13 +49,13 @@ iex(master@benjamintan)>
 [node|Node.list] |> Amnesia.Schema.create
 ```
 
-On _all_ nodes:
+On _any_ nodes:
 
 ```elixir
-iex> Amnesia.start
+iex> :rpc.multicall(Amnesia, :start, [])
 ```
 
-Then, one one of the nodes:
+Then, again on _any_ node:
 
 ```elixir
 Dice.Database.create(disk: [node|Node.list])
