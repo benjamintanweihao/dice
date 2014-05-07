@@ -1,0 +1,7 @@
+%{"amnesia": {:git, "git://github.com/benjamintanweihao/amnesia.git", "c46b8639f7665b8af30900640411320a2faae13b", []},
+  "continuum": {:git, "git://github.com/benjamintanweihao/continuum.git", "0f8ff36f895acf925f340c1ef8b4f3a3431afc10", []},
+  "datastructures": {:git, "git://github.com/meh/elixir-datastructures.git", "28a7aee9addfe521ad0aa62f5e54f1ad597356cc", []},
+  "exquisite": {:git, "git://github.com/meh/exquisite.git", "beff7f389dd4016bffa0ec50b44d80efdd9070b1", []},
+  "exzmq": {:git, "https://github.com/benjamintanweihao/exzmq", "46493b874af826ffa3459022e7924e176a717a0b", []},
+  "gen_listener_tcp": {:git, "git://github.com/kaos/gen_listener_tcp.git", "52be852254bf751e6d339e664d1c4ad7d3936edf", []},
+  "json": {:git, "git://github.com/cblage/elixir-json.git", "725ea02b992aba35c18d0e9c7c3da54689670baf", []}}
