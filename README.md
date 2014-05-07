@@ -138,3 +138,7 @@ ruby client.rb
 ```
 
 You'll see a bunch of text scrolling in `iex(tcp_interface@benjamintan)`.
+
+## TODO
+
+* Proper failover and takeover.
