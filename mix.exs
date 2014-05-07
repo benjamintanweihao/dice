@@ -22,6 +22,10 @@ defmodule Dice.Mixfile do
   #
   # Type `mix help deps` for more examples and options
   defp deps do
-    [{ :amnesia, github: "benjamintanweihao/amnesia" }]
+    [
+      {:amnesia, github: "benjamintanweihao/amnesia"},
+      {:exzmq, git: "https://github.com/benjamintanweihao/exzmq"},
+      {:json, github: "cblage/elixir-json"}
+    ]
   end
 end
