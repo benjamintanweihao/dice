@@ -4,6 +4,8 @@ defmodule Dice.Server do
 
   alias Dice.Server
 
+  defstruct role: :slave
+
   #######
   # API #
   #######
@@ -28,12 +30,20 @@ defmodule Dice.Server do
     :gen_server.call(__MODULE__, {:remove, key})
   end
 
+  def leader_pid, do: :global.whereis_name(__MODULE__)
+
   #############
   # Callbacks #
   #############
 
   def init(_) do
-    {:ok, []}
+    case :global.register_name(__MODULE__, self) do
+      :no  ->
+        Process.link(leader_pid)
+        {:ok, %Server{role: :slave}}
+      :yes ->
+        {:ok, %Server{role: :leader}}
+    end
   end
 
   def terminate(_reason, _state) do
