@@ -41,7 +41,6 @@ defmodule Dice.Server do
   #############
 
   def init(_) do
-    IO.puts "==== INIT ===="
     case :global.register_name(__MODULE__, self) do
       :no ->
         # NOTE: :noproc is sent when the leader goes down. 
@@ -75,12 +74,12 @@ defmodule Dice.Server do
   end
 
   def handle_info(:timeout, %Server{role: :leader} = state) do
-    # Manually start ZeroMQ
     Exzmq.App.start(nil, nil)
 
     {:ok, socket} = Exzmq.start([{:type, :rep}])
     Exzmq.bind(socket, :tcp, @port, [])
     loop(socket)
+
     {:noreply, state}
   end
 
