@@ -41,9 +41,11 @@ defmodule Dice.Server do
   #############
 
   def init(_) do
+    IO.puts "==== INIT ===="
     case :global.register_name(__MODULE__, self) do
       :no ->
-        # TODO: :noproc is sent when the leader goes down.
+        # NOTE: :noproc is sent when the leader goes down. 
+        # Has nice takeover properties.
         Process.link(leader_pid)
         {:ok, %Server{role: :slave}}
 
@@ -73,16 +75,13 @@ defmodule Dice.Server do
   end
 
   def handle_info(:timeout, %Server{role: :leader} = state) do
+    # Manually start ZeroMQ
+    Exzmq.App.start(nil, nil)
+
     {:ok, socket} = Exzmq.start([{:type, :rep}])
     Exzmq.bind(socket, :tcp, @port, [])
     loop(socket)
     {:noreply, state}
-  end
-
-  def handle_info(msg, state) do
-    IO.puts "Handle INFO"
-    IO.inpsect msg
-    IO.inpsect state
   end
 
   ######################
@@ -92,14 +91,28 @@ defmodule Dice.Server do
   defp loop(socket) do
     case Exzmq.recv(socket) do
       {:ok, [msg]} ->
-        # result = case msg |> Integer.parse do
-        #            {num, _} ->
-        #              [result: run(num)]
-        #            _ ->
-        #              [result: []]
-        #           end
-        # Exzmq.send(socket, [result |> JSON.encode!])
-        Exzmq.send(socket, [msg |> JSON.encode!])
+        IO.puts  "Received: #{msg}"
+        
+        case "#{msg}" |> JSON.decode do
+          {:ok, hash} ->
+
+            result = case hash["op"] do
+                       "put" ->
+                         Dice.Server.put hash["key"], hash["value"]
+                       "get" ->
+                         Dice.Server.get hash["key"] 
+                       "remove" ->
+                         Dice.Server.remove hash["key"] 
+                       _ ->
+                         :error
+                      end
+
+            Exzmq.send(socket, [[result: result] |> JSON.encode!])
+
+          _ ->
+            Exzmq.send(socket, [[result: []] |> JSON.encode!])
+      
+        end
 
       _ ->
         Exzmq.send(socket, [[result: []] |> JSON.encode!])
