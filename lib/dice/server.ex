@@ -4,20 +4,12 @@ defmodule Dice.Server do
 
   alias Dice.Server
 
-  @port 1155
-
-  defstruct role: :slave
-
   #######
   # API #
   #######
 
   def start_link do
     :gen_server.start_link({:local, __MODULE__}, __MODULE__, [], [])
-  end
-
-  def leader_pid do
-    :global.whereis_name(__MODULE__)
   end
 
   def stop do
@@ -41,16 +33,7 @@ defmodule Dice.Server do
   #############
 
   def init(_) do
-    case :global.register_name(__MODULE__, self) do
-      :no ->
-        # NOTE: :noproc is sent when the leader goes down. 
-        # Has nice takeover properties.
-        Process.link(leader_pid)
-        {:ok, %Server{role: :slave}}
-
-      :yes ->
-        {:ok, %Server{role: :leader}, 0}
-    end  
+    {:ok, []}
   end
 
   def terminate(_reason, _state) do
@@ -71,52 +54,6 @@ defmodule Dice.Server do
 
   def handle_call({:remove, key}, _from, state) do
     {:reply,  Database.DiceCache.remove(key), state }
-  end
-
-  def handle_info(:timeout, %Server{role: :leader} = state) do
-    Exzmq.App.start(nil, nil)
-
-    {:ok, socket} = Exzmq.start([{:type, :rep}])
-    Exzmq.bind(socket, :tcp, @port, [])
-    loop(socket)
-
-    {:noreply, state}
-  end
-
-  ######################
-  # Internal Functions #
-  ######################
-
-  defp loop(socket) do
-    case Exzmq.recv(socket) do
-      {:ok, [msg]} ->
-        IO.puts  "Received: #{msg}"
-        
-        case "#{msg}" |> JSON.decode do
-          {:ok, hash} ->
-
-            result = case hash["op"] do
-                       "put" ->
-                         Dice.Server.put hash["key"], hash["value"]
-                       "get" ->
-                         Dice.Server.get hash["key"] 
-                       "remove" ->
-                         Dice.Server.remove hash["key"] 
-                       _ ->
-                         :error
-                      end
-
-            Exzmq.send(socket, [[result: result] |> JSON.encode!])
-
-          _ ->
-            Exzmq.send(socket, [[result: []] |> JSON.encode!])
-      
-        end
-
-      _ ->
-        Exzmq.send(socket, [[result: []] |> JSON.encode!])
-    end
-    loop(socket)
   end
 
 end
