@@ -109,3 +109,32 @@ iex(master@benjamintan)> Dice.Server.get "php"
 ```
 
 Notice that the table data is automatically replicated. Mnesia FTW!
+
+## DiCE Interface – A TCP Interface for DiCE
+
+DiCE can work with a [TCP interface](https://github.com/benjamintanweihao/dice_interface) too. 
+
+```
+% git clone https://github.com/benjamintanweihao/dice_interface && cd dice_interface
+```
+
+Run in the terminal:
+
+```
+% iex --sname tcp_interface -S mix
+```
+
+Next, we need to connect the TCP interface app to the cluster. Any of the 3 nodes will do:
+
+```elixir
+iex(tcp_interface@benjamintan)> Node.connect :'slave1@benjamintan'
+true
+```
+
+Next, go ahead and run the Ruby example client (see [README](https://github.com/benjamintanweihao/dice_interface/blob/master/README.md)):
+
+```
+ruby client.rb
+```
+
+You'll see a bunch of text scrolling in `iex(tcp_interface@benjamintan)`.
